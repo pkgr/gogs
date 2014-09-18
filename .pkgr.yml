@@ -10,4 +10,6 @@ dependencies:
 before:
   - mv packager/Procfile .
   - mv packager/.godir .
+after:
+  - mv bin/main gogs
 after_install: ./packager/debian/postinst
