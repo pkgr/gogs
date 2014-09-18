@@ -1,5 +1,7 @@
 targets:
   ubuntu-14.04:
+  ubuntu-12.04:
+  debian-7:
 build_dependencies:
   - mercurial
   - bzr
@@ -8,6 +10,4 @@ dependencies:
 before:
   - mv packager/Procfile .
   - mv packager/.godir .
-after:
-  - mv bin/main gogs
 after_install: ./packager/debian/postinst
