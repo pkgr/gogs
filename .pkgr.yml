@@ -1,7 +1,19 @@
 targets:
   ubuntu-14.04:
+    build_dependencies:
+      - libpam0g-dev
+    dependencies:
+      - libpam0g
   ubuntu-12.04:
+     build_dependencies:
+      - libpam0g-dev
+    dependencies:
+      - libpam0g
   debian-7:
+     build_dependencies:
+      - libpam0g-dev
+    dependencies:
+      - libpam0g
   centos-6:
 dependencies:
   - git
