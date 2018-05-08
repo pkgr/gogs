@@ -24,7 +24,7 @@ Gogs [![Build Status](https://travis-ci.org/gogits/gogs.svg?branch=master)](http
 
 ## Purpose
 
-The goal of this project is to make the easiest, fastest, and most painless way of setting up a self-hosted Git service. With Go, this can be done with an independent binary distribution across **ALL platforms** that Go supports, including Linux, Mac OS X, Windows and ARM.
+The goal of this project is to make the easiest, fastest, and most painless way of setting up a self-hosted Git service. With Go, this can be done with an independent binary distribution across **ALL platforms** that Go supports, including Linux, macOS, Windows and ARM.
 
 ## Overview
 
@@ -52,7 +52,7 @@ The goal of this project is to make the easiest, fastest, and most painless way 
 - Mail service
 - Administration panel
 - Supports MySQL, PostgreSQL, SQLite3, MSSQL and [TiDB](https://github.com/pingcap/tidb) (via MySQL protocol)
-- Multi-language support ([26 languages](https://crowdin.com/project/gogs))
+- Multi-language support ([29 languages](https://crowdin.com/project/gogs))
 
 ## Hardware Requirements
 
@@ -124,9 +124,9 @@ There are 5 ways to install Gogs:
 ## Acknowledgments
 
 - Thanks [Egon Elbre](https://twitter.com/egonelbre) for designing logo.
-- Thanks [Crowdin](https://crowdin.com/project/gogs) for providing open source translation plan.
-- Thanks [DigitalOcean](https://www.digitalocean.com) for hosting home and demo sites.
-- Thanks [KeyCDN](https://www.keycdn.com/) and [QiNiu](http://www.qiniu.com/) for providing CDN service.
+- Thanks [Crowdin](https://crowdin.com/project/gogs) for sponsoring open source translation plan.
+- Thanks [DigitalOcean](https://www.digitalocean.com) for sponsoring VPS service.
+- Thanks [KeyCDN](https://www.keycdn.com/) for sponsoring CDN service.
 
 ## Contributors
 

@@ -22,6 +22,7 @@ import (
 	"github.com/gogits/git-module"
 
 	"github.com/gogits/gogs/models"
+	"github.com/gogits/gogs/models/errors"
 	"github.com/gogits/gogs/pkg/httplib"
 	"github.com/gogits/gogs/pkg/mailer"
 	"github.com/gogits/gogs/pkg/setting"
@@ -94,7 +95,7 @@ func runHookPreReceive(c *cli.Context) error {
 		repoID := com.StrTo(os.Getenv(http.ENV_REPO_ID)).MustInt64()
 		protectBranch, err := models.GetProtectBranchOfRepoByName(repoID, branchName)
 		if err != nil {
-			if models.IsErrBranchNotExist(err) {
+			if errors.IsErrBranchNotExist(err) {
 				continue
 			}
 			fail("Internal error", "GetProtectBranchOfRepoByName [repo_id: %d, branch: %s]: %v", repoID, branchName, err)
@@ -235,9 +236,9 @@ func runHookPostReceive(c *cli.Context) error {
 			log.Error(2, "PushUpdate: %v", err)
 		}
 
-		// Ask for running deliver hook and test pull request tasks.
+		// Ask for running deliver hook and test pull request tasks
 		reqURL := setting.LocalURL + options.RepoUserName + "/" + options.RepoName + "/tasks/trigger?branch=" +
-			strings.TrimPrefix(options.RefFullName, git.BRANCH_PREFIX) +
+			template.EscapePound(strings.TrimPrefix(options.RefFullName, git.BRANCH_PREFIX)) +
 			"&secret=" + os.Getenv(http.ENV_REPO_OWNER_SALT_MD5) +
 			"&pusher=" + os.Getenv(http.ENV_AUTH_USER_ID)
 		log.Trace("Trigger task: %s", reqURL)

@@ -172,6 +172,8 @@ func runWeb(c *cli.Context) error {
 
 	bindIgnErr := binding.BindIgnErr
 
+	m.SetAutoHead(true)
+
 	// FIXME: not all routes need go through same middlewares.
 	// Especially some AJAX requests, we can reduce middleware number to improve performance.
 	// Routers.
@@ -635,8 +637,10 @@ func runWeb(c *cli.Context) error {
 		// e.g. with or without ".git" suffix.
 		m.Group("/:reponame([\\d\\w-_\\.]+\\.git$)", func() {
 			m.Get("", ignSignIn, context.RepoAssignment(), context.RepoRef(), repo.Home)
+			m.Options("/*", ignSignInAndCsrf, repo.HTTPContexter(), repo.HTTP)
 			m.Route("/*", "GET,POST", ignSignInAndCsrf, repo.HTTPContexter(), repo.HTTP)
 		})
+		m.Options("/:reponame/*", ignSignInAndCsrf, repo.HTTPContexter(), repo.HTTP)
 		m.Route("/:reponame/*", "GET,POST", ignSignInAndCsrf, repo.HTTPContexter(), repo.HTTP)
 	})
 	// ***** END: Repository *****
@@ -723,7 +727,7 @@ func runWeb(c *cli.Context) error {
 	}
 
 	if err != nil {
-		log.Fatal(4, "Fail to start server: %v", err)
+		log.Fatal(4, "Failed to start server: %v", err)
 	}
 
 	return nil

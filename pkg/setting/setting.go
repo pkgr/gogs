@@ -82,18 +82,19 @@ var (
 	}
 
 	SSH struct {
-		Disabled            bool           `ini:"DISABLE_SSH"`
-		StartBuiltinServer  bool           `ini:"START_SSH_SERVER"`
-		Domain              string         `ini:"SSH_DOMAIN"`
-		Port                int            `ini:"SSH_PORT"`
-		ListenHost          string         `ini:"SSH_LISTEN_HOST"`
-		ListenPort          int            `ini:"SSH_LISTEN_PORT"`
-		RootPath            string         `ini:"SSH_ROOT_PATH"`
-		ServerCiphers       []string       `ini:"SSH_SERVER_CIPHERS"`
-		KeyTestPath         string         `ini:"SSH_KEY_TEST_PATH"`
-		KeygenPath          string         `ini:"SSH_KEYGEN_PATH"`
-		MinimumKeySizeCheck bool           `ini:"MINIMUM_KEY_SIZE_CHECK"`
-		MinimumKeySizes     map[string]int `ini:"-"`
+		Disabled                     bool           `ini:"DISABLE_SSH"`
+		StartBuiltinServer           bool           `ini:"START_SSH_SERVER"`
+		Domain                       string         `ini:"SSH_DOMAIN"`
+		Port                         int            `ini:"SSH_PORT"`
+		ListenHost                   string         `ini:"SSH_LISTEN_HOST"`
+		ListenPort                   int            `ini:"SSH_LISTEN_PORT"`
+		RootPath                     string         `ini:"SSH_ROOT_PATH"`
+		RewriteAuthorizedKeysAtStart bool           `ini:"REWRITE_AUTHORIZED_KEYS_AT_START"`
+		ServerCiphers                []string       `ini:"SSH_SERVER_CIPHERS"`
+		KeyTestPath                  string         `ini:"SSH_KEY_TEST_PATH"`
+		KeygenPath                   string         `ini:"SSH_KEYGEN_PATH"`
+		MinimumKeySizeCheck          bool           `ini:"MINIMUM_KEY_SIZE_CHECK"`
+		MinimumKeySizes              map[string]int `ini:"-"`
 	}
 
 	// Security settings
@@ -486,6 +487,7 @@ func NewContext() {
 	}
 
 	SSH.RootPath = path.Join(homeDir, ".ssh")
+	SSH.RewriteAuthorizedKeysAtStart = sec.Key("REWRITE_AUTHORIZED_KEYS_AT_START").MustBool()
 	SSH.ServerCiphers = sec.Key("SSH_SERVER_CIPHERS").Strings(",")
 	SSH.KeyTestPath = os.TempDir()
 	if err = Cfg.Section("server").MapTo(&SSH); err != nil {
@@ -502,6 +504,10 @@ func NewContext() {
 		} else if err = os.MkdirAll(SSH.KeyTestPath, 0644); err != nil {
 			log.Fatal(2, "Fail to create '%s': %v", SSH.KeyTestPath, err)
 		}
+	}
+
+	if SSH.StartBuiltinServer {
+		SSH.RewriteAuthorizedKeysAtStart = false
 	}
 
 	// Check if server is eligible for minimum key size check when user choose to enable.
@@ -771,6 +777,14 @@ func newLogService() {
 				BufferSize: Cfg.Section("log").Key("BUFFER_LEN").MustInt64(100),
 				URL:        sec.Key("URL").String(),
 			}
+
+		case log.DISCORD:
+			LogConfigs[i] = log.DiscordConfig{
+				Level:      level,
+				BufferSize: Cfg.Section("log").Key("BUFFER_LEN").MustInt64(100),
+				URL:        sec.Key("URL").String(),
+				Username:   sec.Key("USERNAME").String(),
+			}
 		}
 
 		log.New(log.MODE(mode), LogConfigs[i])
@@ -815,7 +829,7 @@ func newSessionService() {
 // Mailer represents mail service.
 type Mailer struct {
 	QueueLength       int
-	Subject           string
+	SubjectPrefix     string
 	Host              string
 	From              string
 	FromEmail         string
@@ -842,7 +856,7 @@ func newMailService() {
 
 	MailService = &Mailer{
 		QueueLength:    sec.Key("SEND_BUFFER_LEN").MustInt(100),
-		Subject:        sec.Key("SUBJECT").MustString(AppName),
+		SubjectPrefix:  sec.Key("SUBJECT_PREFIX").MustString("[" + AppName + "] "),
 		Host:           sec.Key("HOST").String(),
 		User:           sec.Key("USER").String(),
 		Passwd:         sec.Key("PASSWD").String(),
