@@ -13,7 +13,7 @@ import (
 	"github.com/go-xorm/xorm"
 	log "gopkg.in/clog.v1"
 
-	"github.com/gogits/gogs/pkg/tool"
+	"github.com/gogs/gogs/pkg/tool"
 )
 
 const _MIN_DB_VER = 10
@@ -64,6 +64,10 @@ var migrations = []Migration{
 	NewMigration("update repository sizes", updateRepositorySizes),
 	// v16 -> v17:v0.10.31
 	NewMigration("remove invalid protect branch whitelist", removeInvalidProtectBranchWhitelist),
+	// v17 -> v18:v0.11.48
+	NewMigration("store long text in repository description field", updateRepositoryDescriptionField),
+	// v18 -> v19:v0.11.55
+	NewMigration("clean unlinked webhook and hook_tasks", cleanUnlinkedWebhookAndHookTasks),
 }
 
 // Migrate database to current version
@@ -98,9 +102,9 @@ You can migrate your older database using a previous release, then you can upgra
 Please save following instructions to somewhere and start working:
 
 - If you were using below 0.6.0 (e.g. 0.5.x), download last supported archive from following link:
-	https://github.com/gogits/gogs/releases/tag/v0.7.33
+	https://github.com/gogs/gogs/releases/tag/v0.7.33
 - If you were using below 0.7.0 (e.g. 0.6.x), download last supported archive from following link:
-	https://github.com/gogits/gogs/releases/tag/v0.9.141
+	https://github.com/gogs/gogs/releases/tag/v0.9.141
 
 Once finished downloading,
 
@@ -158,7 +162,7 @@ func generateOrgRandsAndSalt(x *xorm.Engine) (err error) {
 		if org.Salt, err = tool.RandomString(10); err != nil {
 			return err
 		}
-		if _, err = sess.Id(org.ID).Update(org); err != nil {
+		if _, err = sess.ID(org.ID).Update(org); err != nil {
 			return err
 		}
 	}

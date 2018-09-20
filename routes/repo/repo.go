@@ -13,14 +13,14 @@ import (
 	"github.com/Unknwon/com"
 	log "gopkg.in/clog.v1"
 
-	"github.com/gogits/git-module"
+	"github.com/gogs/git-module"
 
-	"github.com/gogits/gogs/models"
-	"github.com/gogits/gogs/models/errors"
-	"github.com/gogits/gogs/pkg/context"
-	"github.com/gogits/gogs/pkg/form"
-	"github.com/gogits/gogs/pkg/setting"
-	"github.com/gogits/gogs/pkg/tool"
+	"github.com/gogs/gogs/models"
+	"github.com/gogs/gogs/models/errors"
+	"github.com/gogs/gogs/pkg/context"
+	"github.com/gogs/gogs/pkg/form"
+	"github.com/gogs/gogs/pkg/setting"
+	"github.com/gogs/gogs/pkg/tool"
 )
 
 const (
@@ -66,7 +66,8 @@ func checkContextUser(c *context.Context, uid int64) *models.User {
 }
 
 func Create(c *context.Context) {
-	c.Data["Title"] = c.Tr("new_repo")
+	c.Title("new_repo")
+	c.RequireAutosize()
 
 	// Give default value for template to render.
 	c.Data["Gitignores"] = models.Gitignores

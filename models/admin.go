@@ -15,8 +15,8 @@ import (
 	"github.com/go-xorm/xorm"
 	log "gopkg.in/clog.v1"
 
-	"github.com/gogits/gogs/pkg/setting"
-	"github.com/gogits/gogs/pkg/tool"
+	"github.com/gogs/gogs/pkg/setting"
+	"github.com/gogs/gogs/pkg/tool"
 )
 
 type NoticeType int
@@ -30,7 +30,7 @@ type Notice struct {
 	ID          int64
 	Type        NoticeType
 	Description string    `xorm:"TEXT"`
-	Created     time.Time `xorm:"-"`
+	Created     time.Time `xorm:"-" json:"-"`
 	CreatedUnix int64
 }
 

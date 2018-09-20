@@ -17,8 +17,8 @@ import (
 	log "gopkg.in/clog.v1"
 	"gopkg.in/ini.v1"
 
-	"github.com/gogits/gogs/models"
-	"github.com/gogits/gogs/pkg/setting"
+	"github.com/gogs/gogs/models"
+	"github.com/gogs/gogs/pkg/setting"
 )
 
 var Backup = cli.Command{
@@ -39,6 +39,7 @@ portable among all supported database engines.`,
 	},
 }
 
+const _CURRENT_BACKUP_FORMAT_VERSION = 1
 const _ARCHIVE_ROOT_DIR = "gogs-backup"
 
 func runBackup(c *cli.Context) error {
@@ -63,7 +64,7 @@ func runBackup(c *cli.Context) error {
 	// Metadata
 	metaFile := path.Join(rootDir, "metadata.ini")
 	metadata := ini.Empty()
-	metadata.Section("").Key("VERSION").SetValue("1")
+	metadata.Section("").Key("VERSION").SetValue(com.ToStr(_CURRENT_BACKUP_FORMAT_VERSION))
 	metadata.Section("").Key("DATE_TIME").SetValue(time.Now().String())
 	metadata.Section("").Key("GOGS_VERSION").SetValue(setting.AppVer)
 	if err = metadata.SaveTo(metaFile); err != nil {
@@ -99,7 +100,7 @@ func runBackup(c *cli.Context) error {
 
 	// Data files
 	if !c.Bool("database-only") {
-		for _, dir := range []string{"attachments", "avatars"} {
+		for _, dir := range []string{"attachments", "avatars", "repo-avatars"} {
 			dirPath := path.Join(setting.AppDataPath, dir)
 			if !com.IsDir(dirPath) {
 				continue

@@ -9,7 +9,7 @@ import (
 
 	log "gopkg.in/clog.v1"
 
-	"github.com/gogits/gogs/models/errors"
+	"github.com/gogs/gogs/models/errors"
 )
 
 type AccessMode int
@@ -237,6 +237,6 @@ func (repo *Repository) recalculateAccesses(e Engine) error {
 }
 
 // RecalculateAccesses recalculates all accesses for repository.
-func (r *Repository) RecalculateAccesses() error {
-	return r.recalculateAccesses(x)
+func (repo *Repository) RecalculateAccesses() error {
+	return repo.recalculateAccesses(x)
 }

@@ -9,7 +9,7 @@ import (
 
 	log "gopkg.in/clog.v1"
 
-	api "github.com/gogits/go-gogs-client"
+	api "github.com/gogs/go-gogs-client"
 )
 
 // Collaboration represent the relation between an individual and a repository.
@@ -170,7 +170,7 @@ func (repo *Repository) ChangeCollaborationAccessMode(userID int64, mode AccessM
 		return err
 	}
 
-	if _, err = sess.Id(collaboration.ID).AllCols().Update(collaboration); err != nil {
+	if _, err = sess.ID(collaboration.ID).AllCols().Update(collaboration); err != nil {
 		return fmt.Errorf("update collaboration: %v", err)
 	}
 

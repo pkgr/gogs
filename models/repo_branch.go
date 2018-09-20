@@ -9,10 +9,10 @@ import (
 	"strings"
 
 	"github.com/Unknwon/com"
-	"github.com/gogits/git-module"
+	"github.com/gogs/git-module"
 
-	"github.com/gogits/gogs/models/errors"
-	"github.com/gogits/gogs/pkg/tool"
+	"github.com/gogs/gogs/models/errors"
+	"github.com/gogs/gogs/pkg/tool"
 )
 
 type Branch struct {
@@ -131,7 +131,7 @@ func UpdateProtectBranch(protectBranch *ProtectBranch) (err error) {
 		}
 	}
 
-	if _, err = sess.Id(protectBranch.ID).AllCols().Update(protectBranch); err != nil {
+	if _, err = sess.ID(protectBranch.ID).AllCols().Update(protectBranch); err != nil {
 		return fmt.Errorf("Update: %v", err)
 	}
 
@@ -234,7 +234,7 @@ func UpdateOrgProtectBranch(repo *Repository, protectBranch *ProtectBranch, whit
 		return err
 	}
 
-	if _, err = sess.Id(protectBranch.ID).AllCols().Update(protectBranch); err != nil {
+	if _, err = sess.ID(protectBranch.ID).AllCols().Update(protectBranch); err != nil {
 		return fmt.Errorf("Update: %v", err)
 	}
 

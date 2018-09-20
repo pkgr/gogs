@@ -15,13 +15,13 @@ import (
 	"github.com/go-xorm/xorm"
 	log "gopkg.in/clog.v1"
 
-	"github.com/gogits/git-module"
-	api "github.com/gogits/go-gogs-client"
+	"github.com/gogs/git-module"
+	api "github.com/gogs/go-gogs-client"
 
-	"github.com/gogits/gogs/models/errors"
-	"github.com/gogits/gogs/pkg/process"
-	"github.com/gogits/gogs/pkg/setting"
-	"github.com/gogits/gogs/pkg/sync"
+	"github.com/gogs/gogs/models/errors"
+	"github.com/gogs/gogs/pkg/process"
+	"github.com/gogs/gogs/pkg/setting"
+	"github.com/gogs/gogs/pkg/sync"
 )
 
 var PullRequestQueue = sync.NewUniqueQueue(setting.Repository.PullRequestQueueLength)
@@ -48,13 +48,13 @@ type PullRequest struct {
 	Status PullRequestStatus
 
 	IssueID int64  `xorm:"INDEX"`
-	Issue   *Issue `xorm:"-"`
+	Issue   *Issue `xorm:"-" json:"-"`
 	Index   int64
 
 	HeadRepoID   int64
-	HeadRepo     *Repository `xorm:"-"`
+	HeadRepo     *Repository `xorm:"-" json:"-"`
 	BaseRepoID   int64
-	BaseRepo     *Repository `xorm:"-"`
+	BaseRepo     *Repository `xorm:"-" json:"-"`
 	HeadUserName string
 	HeadBranch   string
 	BaseBranch   string
@@ -63,8 +63,8 @@ type PullRequest struct {
 	HasMerged      bool
 	MergedCommitID string `xorm:"VARCHAR(40)"`
 	MergerID       int64
-	Merger         *User     `xorm:"-"`
-	Merged         time.Time `xorm:"-"`
+	Merger         *User     `xorm:"-" json:"-"`
+	Merged         time.Time `xorm:"-" json:"-"`
 	MergedUnix     int64
 }
 
@@ -193,7 +193,7 @@ const (
 
 // Merge merges pull request to base repository.
 // FIXME: add repoWorkingPull make sure two merges does not happen at same time.
-func (pr *PullRequest) Merge(doer *User, baseGitRepo *git.Repository, mergeStyle MergeStyle) (err error) {
+func (pr *PullRequest) Merge(doer *User, baseGitRepo *git.Repository, mergeStyle MergeStyle, commitDescription string) (err error) {
 	defer func() {
 		go HookQueue.Add(pr.BaseRepo.ID)
 		go AddTestPullRequestTask(doer, pr.BaseRepo.ID, pr.BaseBranch, false)
@@ -266,7 +266,8 @@ func (pr *PullRequest) Merge(doer *User, baseGitRepo *git.Repository, mergeStyle
 		if _, stderr, err = process.ExecDir(-1, tmpBasePath,
 			fmt.Sprintf("PullRequest.Merge (git merge): %s", tmpBasePath),
 			"git", "commit", fmt.Sprintf("--author='%s <%s>'", sig.Name, sig.Email),
-			"-m", fmt.Sprintf("Merge branch '%s' of %s/%s into %s", pr.HeadBranch, pr.HeadUserName, pr.HeadRepo.Name, pr.BaseBranch)); err != nil {
+			"-m", fmt.Sprintf("Merge branch '%s' of %s/%s into %s", pr.HeadBranch, pr.HeadUserName, pr.HeadRepo.Name, pr.BaseBranch),
+			"-m", commitDescription); err != nil {
 			return fmt.Errorf("git commit [%s]: %v - %s", tmpBasePath, err, stderr)
 		}
 
@@ -320,7 +321,7 @@ func (pr *PullRequest) Merge(doer *User, baseGitRepo *git.Repository, mergeStyle
 	pr.HasMerged = true
 	pr.Merged = time.Now()
 	pr.MergerID = doer.ID
-	if _, err = sess.Id(pr.ID).AllCols().Update(pr); err != nil {
+	if _, err = sess.ID(pr.ID).AllCols().Update(pr); err != nil {
 		return fmt.Errorf("update pull request: %v", err)
 	}
 
@@ -545,7 +546,7 @@ func GetUnmergedPullRequestsByBaseInfo(repoID int64, branch string) ([]*PullRequ
 
 func getPullRequestByID(e Engine, id int64) (*PullRequest, error) {
 	pr := new(PullRequest)
-	has, err := e.Id(id).Get(pr)
+	has, err := e.ID(id).Get(pr)
 	if err != nil {
 		return nil, err
 	} else if !has {

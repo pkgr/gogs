@@ -15,15 +15,15 @@ import (
 	"github.com/Unknwon/paginater"
 	log "gopkg.in/clog.v1"
 
-	"github.com/gogits/git-module"
+	"github.com/gogs/git-module"
 
-	"github.com/gogits/gogs/models"
-	"github.com/gogits/gogs/pkg/context"
-	"github.com/gogits/gogs/pkg/markup"
-	"github.com/gogits/gogs/pkg/setting"
-	"github.com/gogits/gogs/pkg/template"
-	"github.com/gogits/gogs/pkg/template/highlight"
-	"github.com/gogits/gogs/pkg/tool"
+	"github.com/gogs/gogs/models"
+	"github.com/gogs/gogs/pkg/context"
+	"github.com/gogs/gogs/pkg/markup"
+	"github.com/gogs/gogs/pkg/setting"
+	"github.com/gogs/gogs/pkg/template"
+	"github.com/gogs/gogs/pkg/template/highlight"
+	"github.com/gogs/gogs/pkg/tool"
 )
 
 const (
@@ -185,6 +185,10 @@ func renderFile(c *context.Context, entry *git.TreeEntry, treeLink, rawLink stri
 
 			var output bytes.Buffer
 			lines := strings.Split(fileContent, "\n")
+			// Remove blank line at the end of file
+			if len(lines) > 0 && len(lines[len(lines)-1])==0 {
+				lines = lines[:len(lines)-1]
+			}
 			for index, line := range lines {
 				output.WriteString(fmt.Sprintf(`<li class="L%d" rel="L%d">%s</li>`, index+1, index+1, gotemplate.HTMLEscapeString(strings.TrimRight(line, "\r"))) + "\n")
 			}

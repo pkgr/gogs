@@ -15,9 +15,9 @@ import (
 	"github.com/pquerna/otp/totp"
 	log "gopkg.in/clog.v1"
 
-	"github.com/gogits/gogs/models/errors"
-	"github.com/gogits/gogs/pkg/setting"
-	"github.com/gogits/gogs/pkg/tool"
+	"github.com/gogs/gogs/models/errors"
+	"github.com/gogs/gogs/pkg/setting"
+	"github.com/gogs/gogs/pkg/tool"
 )
 
 // TwoFactor represents a two-factor authentication token.
@@ -25,7 +25,7 @@ type TwoFactor struct {
 	ID          int64
 	UserID      int64 `xorm:"UNIQUE"`
 	Secret      string
-	Created     time.Time `xorm:"-"`
+	Created     time.Time `xorm:"-" json:"-"`
 	CreatedUnix int64
 }
 

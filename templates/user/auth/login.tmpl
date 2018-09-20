@@ -23,7 +23,11 @@
 							<div class="ui selection dropdown">
 								<input type="hidden" id="login_source" name="login_source" value="{{.login_source}}" required>
 								<span class="text">
-									{{.i18n.Tr "auth.local"}}
+									{{if .DefaultLoginSource}}
+										{{.DefaultLoginSource.Name}}
+									{{else}}
+										{{.i18n.Tr "auth.local"}}
+									{{end}}
 								</span>
 								<i class="dropdown icon"></i>
 								<div class="menu">

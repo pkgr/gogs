@@ -5,20 +5,20 @@
 package repo
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
 	"github.com/Unknwon/com"
+	"github.com/json-iterator/go"
 
-	git "github.com/gogits/git-module"
-	api "github.com/gogits/go-gogs-client"
+	git "github.com/gogs/git-module"
+	api "github.com/gogs/go-gogs-client"
 
-	"github.com/gogits/gogs/models"
-	"github.com/gogits/gogs/models/errors"
-	"github.com/gogits/gogs/pkg/context"
-	"github.com/gogits/gogs/pkg/form"
-	"github.com/gogits/gogs/pkg/setting"
+	"github.com/gogs/gogs/models"
+	"github.com/gogs/gogs/models/errors"
+	"github.com/gogs/gogs/pkg/context"
+	"github.com/gogs/gogs/pkg/form"
+	"github.com/gogs/gogs/pkg/setting"
 )
 
 const (
@@ -31,7 +31,7 @@ func Webhooks(c *context.Context) {
 	c.Data["Title"] = c.Tr("repo.settings.hooks")
 	c.Data["PageIsSettingsHooks"] = true
 	c.Data["BaseLink"] = c.Repo.RepoLink
-	c.Data["Description"] = c.Tr("repo.settings.hooks_desc", "https://github.com/gogits/go-gogs-client/wiki/Repositories-Webhooks")
+	c.Data["Description"] = c.Tr("repo.settings.hooks_desc", "https://github.com/gogs/go-gogs-client/wiki/Repositories-Webhooks")
 	c.Data["Types"] = setting.Webhook.Types
 
 	ws, err := models.GetWebhooksByRepoID(c.Repo.Repository.ID)
@@ -185,7 +185,7 @@ func SlackHooksNewPost(c *context.Context, f form.NewSlackHook) {
 		return
 	}
 
-	meta, err := json.Marshal(&models.SlackMeta{
+	meta, err := jsoniter.Marshal(&models.SlackMeta{
 		Channel:  f.Channel,
 		Username: f.Username,
 		IconURL:  f.IconURL,
@@ -236,7 +236,7 @@ func DiscordHooksNewPost(c *context.Context, f form.NewDiscordHook) {
 		return
 	}
 
-	meta, err := json.Marshal(&models.SlackMeta{
+	meta, err := jsoniter.Marshal(&models.SlackMeta{
 		Username: f.Username,
 		IconURL:  f.IconURL,
 		Color:    f.Color,
@@ -415,7 +415,7 @@ func SlackHooksEditPost(c *context.Context, f form.NewSlackHook) {
 		return
 	}
 
-	meta, err := json.Marshal(&models.SlackMeta{
+	meta, err := jsoniter.Marshal(&models.SlackMeta{
 		Channel:  f.Channel,
 		Username: f.Username,
 		IconURL:  f.IconURL,
@@ -459,7 +459,7 @@ func DiscordHooksEditPost(c *context.Context, f form.NewDiscordHook) {
 		return
 	}
 
-	meta, err := json.Marshal(&models.SlackMeta{
+	meta, err := jsoniter.Marshal(&models.SlackMeta{
 		Username: f.Username,
 		IconURL:  f.IconURL,
 		Color:    f.Color,

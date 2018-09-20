@@ -5,22 +5,22 @@
 package admin
 
 import (
-	"encoding/json"
 	"fmt"
 	"runtime"
 	"strings"
 	"time"
 
 	"github.com/Unknwon/com"
+	"github.com/json-iterator/go"
 	"gopkg.in/macaron.v1"
 
-	"github.com/gogits/gogs/models"
-	"github.com/gogits/gogs/pkg/context"
-	"github.com/gogits/gogs/pkg/cron"
-	"github.com/gogits/gogs/pkg/mailer"
-	"github.com/gogits/gogs/pkg/process"
-	"github.com/gogits/gogs/pkg/setting"
-	"github.com/gogits/gogs/pkg/tool"
+	"github.com/gogs/gogs/models"
+	"github.com/gogs/gogs/pkg/context"
+	"github.com/gogs/gogs/pkg/cron"
+	"github.com/gogs/gogs/pkg/mailer"
+	"github.com/gogs/gogs/pkg/process"
+	"github.com/gogs/gogs/pkg/setting"
+	"github.com/gogs/gogs/pkg/tool"
 )
 
 const (
@@ -241,7 +241,7 @@ func Config(c *context.Context) {
 			Mode: strings.Title(setting.LogModes[i]),
 		}
 
-		result, _ := json.MarshalIndent(setting.LogConfigs[i], "", "  ")
+		result, _ := jsoniter.MarshalIndent(setting.LogConfigs[i], "", "  ")
 		loggers[i].Config = string(result)
 	}
 	c.Data["Loggers"] = loggers

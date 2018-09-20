@@ -21,11 +21,11 @@ import (
 	log "gopkg.in/clog.v1"
 	"gopkg.in/macaron.v1"
 
-	"github.com/gogits/gogs/models"
-	"github.com/gogits/gogs/models/errors"
-	"github.com/gogits/gogs/pkg/auth"
-	"github.com/gogits/gogs/pkg/form"
-	"github.com/gogits/gogs/pkg/setting"
+	"github.com/gogs/gogs/models"
+	"github.com/gogs/gogs/models/errors"
+	"github.com/gogs/gogs/pkg/auth"
+	"github.com/gogs/gogs/pkg/form"
+	"github.com/gogs/gogs/pkg/setting"
 )
 
 // Context represents context of a request.
@@ -66,6 +66,14 @@ func (c *Context) RequireHighlightJS() {
 
 func (c *Context) RequireSimpleMDE() {
 	c.Require("SimpleMDE")
+}
+
+func (c *Context) RequireAutosize() {
+	c.Require("Autosize")
+}
+
+func (c *Context) RequireDropzone() {
+	c.Require("Dropzone")
 }
 
 // FormErr sets "Err_xxx" field in template data.

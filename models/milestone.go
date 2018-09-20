@@ -11,9 +11,9 @@ import (
 	"github.com/go-xorm/xorm"
 	log "gopkg.in/clog.v1"
 
-	api "github.com/gogits/go-gogs-client"
+	api "github.com/gogs/go-gogs-client"
 
-	"github.com/gogits/gogs/pkg/setting"
+	"github.com/gogs/gogs/pkg/setting"
 )
 
 // Milestone represents a milestone of repository.
@@ -22,18 +22,18 @@ type Milestone struct {
 	RepoID          int64 `xorm:"INDEX"`
 	Name            string
 	Content         string `xorm:"TEXT"`
-	RenderedContent string `xorm:"-"`
+	RenderedContent string `xorm:"-" json:"-"`
 	IsClosed        bool
 	NumIssues       int
 	NumClosedIssues int
-	NumOpenIssues   int  `xorm:"-"`
+	NumOpenIssues   int  `xorm:"-" json:"-"`
 	Completeness    int  // Percentage(1-100).
-	IsOverDue       bool `xorm:"-"`
+	IsOverDue       bool `xorm:"-" json:"-"`
 
-	DeadlineString string    `xorm:"-"`
-	Deadline       time.Time `xorm:"-"`
+	DeadlineString string    `xorm:"-" json:"-"`
+	Deadline       time.Time `xorm:"-" json:"-"`
 	DeadlineUnix   int64
-	ClosedDate     time.Time `xorm:"-"`
+	ClosedDate     time.Time `xorm:"-" json:"-"`
 	ClosedDateUnix int64
 }
 
@@ -166,7 +166,7 @@ func GetMilestones(repoID int64, page int, isClosed bool) ([]*Milestone, error) 
 }
 
 func updateMilestone(e Engine, m *Milestone) error {
-	_, err := e.Id(m.ID).AllCols().Update(m)
+	_, err := e.ID(m.ID).AllCols().Update(m)
 	return err
 }
 
@@ -223,7 +223,7 @@ func ChangeMilestoneStatus(m *Milestone, isClosed bool) (err error) {
 
 	repo.NumMilestones = int(countRepoMilestones(sess, repo.ID))
 	repo.NumClosedMilestones = int(countRepoClosedMilestones(sess, repo.ID))
-	if _, err = sess.Id(repo.ID).AllCols().Update(repo); err != nil {
+	if _, err = sess.ID(repo.ID).AllCols().Update(repo); err != nil {
 		return err
 	}
 	return sess.Commit()
@@ -383,13 +383,13 @@ func DeleteMilestoneOfRepoByID(repoID, id int64) error {
 		return err
 	}
 
-	if _, err = sess.Id(m.ID).Delete(new(Milestone)); err != nil {
+	if _, err = sess.ID(m.ID).Delete(new(Milestone)); err != nil {
 		return err
 	}
 
 	repo.NumMilestones = int(countRepoMilestones(sess, repo.ID))
 	repo.NumClosedMilestones = int(countRepoClosedMilestones(sess, repo.ID))
-	if _, err = sess.Id(repo.ID).AllCols().Update(repo); err != nil {
+	if _, err = sess.ID(repo.ID).AllCols().Update(repo); err != nil {
 		return err
 	}
 
